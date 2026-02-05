@@ -64,31 +64,16 @@
             <label><input type="checkbox" value="0" />Dom</label>
           </fieldset>
 
-          <button class="primary" type="submit">Salvar objetivo</button>
+          <button class="primary" type="submit">Adicionar hábito</button>
         </form>
-
-        <div class="summary" id="habit-summary">
-          <div class="summary__title">Resumo</div>
-          <p class="summary__goal" id="summary-goal"></p>
-          <div class="summary__stats">
-            <div>
-              <span class="summary__label">Hoje</span>
-              <span class="summary__value" id="summary-today"></span>
-            </div>
-            <div>
-              <span class="summary__label">Progresso</span>
-              <span class="summary__value" id="summary-progress"></span>
-            </div>
-          </div>
-        </div>
       </section>
 
       <section class="panel panel--grid">
         <div class="grid__header">
-          <h2>Últimas 12 semanas</h2>
-          <p>Toque nos quadrados para marcar o hábito.</p>
+          <h2>Meus hábitos</h2>
+          <p>Toque nos quadrados para marcar cada hábito.</p>
         </div>
-        <div class="grid" id="habit-grid" aria-label="Habit tracker"></div>
+        <div class="habits" id="habits-list" aria-label="Lista de hábitos"></div>
       </section>
     </main>
 

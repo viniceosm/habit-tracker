@@ -1,5 +1,4 @@
-const SETTINGS_KEY = "habit-settings";
-const COMPLETIONS_KEY = "habit-completions";
+const HABITS_KEY = "habits";
 
 const habitForm = document.getElementById("habit-form");
 const habitNameInput = document.getElementById("habit-name");
@@ -9,10 +8,7 @@ const monthlyGoalField = document.getElementById("monthly-goal-field");
 const weeklyGoalInput = document.getElementById("weekly-goal");
 const monthlyGoalInput = document.getElementById("monthly-goal");
 const customDaysField = document.getElementById("custom-days-field");
-const summaryGoal = document.getElementById("summary-goal");
-const summaryToday = document.getElementById("summary-today");
-const summaryProgress = document.getElementById("summary-progress");
-const habitGrid = document.getElementById("habit-grid");
+const habitsList = document.getElementById("habits-list");
 
 const weekdayLabels = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
 
@@ -24,36 +20,27 @@ const getDefaultSettings = () => ({
   customDays: [1, 2, 3],
 });
 
-const loadSettings = () => {
-  const stored = localStorage.getItem(SETTINGS_KEY);
+const createHabit = (settings) => ({
+  id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+  ...settings,
+  completions: {},
+});
+
+const loadHabits = () => {
+  const stored = localStorage.getItem(HABITS_KEY);
   if (!stored) {
-    return getDefaultSettings();
+    return [createHabit(getDefaultSettings())];
   }
   try {
-    return { ...getDefaultSettings(), ...JSON.parse(stored) };
+    const parsed = JSON.parse(stored);
+    return Array.isArray(parsed) ? parsed : [createHabit(getDefaultSettings())];
   } catch {
-    return getDefaultSettings();
+    return [createHabit(getDefaultSettings())];
   }
 };
 
-const saveSettings = (settings) => {
-  localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
-};
-
-const loadCompletions = () => {
-  const stored = localStorage.getItem(COMPLETIONS_KEY);
-  if (!stored) {
-    return {};
-  }
-  try {
-    return JSON.parse(stored);
-  } catch {
-    return {};
-  }
-};
-
-const saveCompletions = (completions) => {
-  localStorage.setItem(COMPLETIONS_KEY, JSON.stringify(completions));
+const saveHabits = (habits) => {
+  localStorage.setItem(HABITS_KEY, JSON.stringify(habits));
 };
 
 const formatDateKey = (date) => date.toISOString().split("T")[0];
@@ -80,23 +67,23 @@ const getDatesRange = (days) => {
   return dates;
 };
 
-const isTargetDate = (date, settings) => {
-  if (settings.goal === "custom") {
-    return settings.customDays.includes(date.getDay());
+const isTargetDate = (date, habit) => {
+  if (habit.goal === "custom") {
+    return habit.customDays.includes(date.getDay());
   }
   return true;
 };
 
-const describeGoal = (settings) => {
-  switch (settings.goal) {
+const describeGoal = (habit) => {
+  switch (habit.goal) {
     case "daily":
       return "Objetivo diário: marcar todos os dias.";
     case "weekly":
-      return `Objetivo semanal: ${settings.weeklyTarget} dias por semana.`;
+      return `Objetivo semanal: ${habit.weeklyTarget} dias por semana.`;
     case "monthly":
-      return `Objetivo mensal: ${settings.monthlyTarget} dias por mês.`;
+      return `Objetivo mensal: ${habit.monthlyTarget} dias por mês.`;
     case "custom":
-      return `Dias específicos: ${settings.customDays
+      return `Dias específicos: ${habit.customDays
         .map((day) => weekdayLabels[day])
         .join(", ")}.`;
     default:
@@ -104,32 +91,32 @@ const describeGoal = (settings) => {
   }
 };
 
-const calculateProgress = (settings, completions) => {
+const calculateProgress = (habit) => {
   const today = new Date();
   const todayKey = formatDateKey(today);
-  const todayDone = Boolean(completions[todayKey]);
+  const todayDone = Boolean(habit.completions[todayKey]);
 
-  if (settings.goal === "daily") {
+  if (habit.goal === "daily") {
     return {
       today: todayDone ? "Feito" : "Pendente",
       progress: todayDone ? "1/1" : "0/1",
     };
   }
 
-  if (settings.goal === "weekly") {
+  if (habit.goal === "weekly") {
     const start = startOfWeek(today);
     const weekDates = getDatesRange(7).filter((date) => date >= start);
     const done = weekDates.reduce(
-      (acc, date) => acc + (completions[formatDateKey(date)] ? 1 : 0),
+      (acc, date) => acc + (habit.completions[formatDateKey(date)] ? 1 : 0),
       0
     );
     return {
       today: todayDone ? "Feito" : "Pendente",
-      progress: `${done}/${settings.weeklyTarget}`,
+      progress: `${done}/${habit.weeklyTarget}`,
     };
   }
 
-  if (settings.goal === "monthly") {
+  if (habit.goal === "monthly") {
     const start = startOfMonth(today);
     const daysInMonth = new Date(
       today.getFullYear(),
@@ -138,36 +125,29 @@ const calculateProgress = (settings, completions) => {
     ).getDate();
     const monthDates = getDatesRange(daysInMonth).filter((date) => date >= start);
     const done = monthDates.reduce(
-      (acc, date) => acc + (completions[formatDateKey(date)] ? 1 : 0),
+      (acc, date) => acc + (habit.completions[formatDateKey(date)] ? 1 : 0),
       0
     );
     return {
       today: todayDone ? "Feito" : "Pendente",
-      progress: `${done}/${settings.monthlyTarget}`,
+      progress: `${done}/${habit.monthlyTarget}`,
     };
   }
 
   const weekStart = startOfWeek(today);
   const weekDates = getDatesRange(7).filter((date) => date >= weekStart);
-  const targetCount = weekDates.filter((date) => isTargetDate(date, settings)).length;
+  const targetCount = weekDates.filter((date) => isTargetDate(date, habit)).length;
   const done = weekDates.reduce((acc, date) => {
-    if (!isTargetDate(date, settings)) {
+    if (!isTargetDate(date, habit)) {
       return acc;
     }
-    return acc + (completions[formatDateKey(date)] ? 1 : 0);
+    return acc + (habit.completions[formatDateKey(date)] ? 1 : 0);
   }, 0);
 
   return {
     today: todayDone ? "Feito" : "Pendente",
     progress: `${done}/${targetCount}`,
   };
-};
-
-const renderSummary = (settings, completions) => {
-  summaryGoal.textContent = describeGoal(settings);
-  const { today, progress } = calculateProgress(settings, completions);
-  summaryToday.textContent = today;
-  summaryProgress.textContent = progress;
 };
 
 const renderForm = (settings) => {
@@ -184,8 +164,8 @@ const renderForm = (settings) => {
   customDaysField.style.display = settings.goal === "custom" ? "flex" : "none";
 };
 
-const renderGrid = (settings, completions) => {
-  habitGrid.innerHTML = "";
+const renderGrid = (habit, container, habits) => {
+  container.innerHTML = "";
   const dates = getDatesRange(84);
   const todayKey = formatDateKey(new Date());
   const columns = Math.ceil(dates.length / 7);
@@ -211,62 +191,117 @@ const renderGrid = (settings, completions) => {
         square.classList.add("day--today");
       }
 
-      if (completions[key]) {
+      if (habit.completions[key]) {
         square.classList.add("day--done");
       }
 
-      if (!isTargetDate(date, settings)) {
+      if (!isTargetDate(date, habit)) {
         square.classList.add("day--inactive");
         square.setAttribute("aria-disabled", "true");
       }
 
       square.addEventListener("click", () => {
-        if (!isTargetDate(date, settings)) {
+        if (!isTargetDate(date, habit)) {
           return;
         }
-        completions[key] = !completions[key];
-        saveCompletions(completions);
-        renderGrid(settings, completions);
-        renderSummary(settings, completions);
+        habit.completions[key] = !habit.completions[key];
+        saveHabits(habits);
+        renderHabits(habits);
       });
 
       column.appendChild(square);
     }
-    habitGrid.appendChild(column);
+    container.appendChild(column);
   }
 };
 
-const updateView = (settings, completions) => {
-  renderForm(settings);
-  renderSummary(settings, completions);
-  renderGrid(settings, completions);
+const renderHabits = (habits) => {
+  habitsList.innerHTML = "";
+  habits.forEach((habit) => {
+    const card = document.createElement("article");
+    card.className = "habit-card";
+
+    const header = document.createElement("header");
+    header.className = "habit-card__header";
+
+    const title = document.createElement("div");
+    title.className = "habit-card__title";
+    title.textContent = habit.name;
+
+    const goalText = document.createElement("div");
+    goalText.className = "habit-card__goal";
+    goalText.textContent = describeGoal(habit);
+
+    header.appendChild(title);
+    header.appendChild(goalText);
+
+    const summary = document.createElement("div");
+    summary.className = "summary";
+    const { today, progress } = calculateProgress(habit);
+    summary.innerHTML = `
+      <div class=\"summary__title\">Resumo</div>
+      <p class=\"summary__goal\">${describeGoal(habit)}</p>
+      <div class=\"summary__stats\">
+        <div>
+          <span class=\"summary__label\">Hoje</span>
+          <span class=\"summary__value\">${today}</span>
+        </div>
+        <div>
+          <span class=\"summary__label\">Progresso</span>
+          <span class=\"summary__value\">${progress}</span>
+        </div>
+      </div>
+    `;
+
+    const grid = document.createElement("div");
+    grid.className = "grid";
+
+    card.appendChild(header);
+    card.appendChild(summary);
+    card.appendChild(grid);
+    habitsList.appendChild(card);
+
+    renderGrid(habit, grid, habits);
+  });
 };
 
-let settings = loadSettings();
-let completions = loadCompletions();
-
-updateView(settings, completions);
-
-habitGoalSelect.addEventListener("change", (event) => {
-  settings = { ...settings, goal: event.target.value };
-  updateView(settings, completions);
-});
-
-habitForm.addEventListener("submit", (event) => {
-  event.preventDefault();
+const getFormSettings = () => {
   const customDays = Array.from(
     customDaysField.querySelectorAll("input:checked")
   ).map((input) => Number(input.value));
 
-  settings = {
-    ...settings,
+  return {
     name: habitNameInput.value.trim() || "Meu hábito",
     goal: habitGoalSelect.value,
     weeklyTarget: Number(weeklyGoalInput.value),
     monthlyTarget: Number(monthlyGoalInput.value),
-    customDays: customDays.length ? customDays : settings.customDays,
+    customDays: customDays.length ? customDays : getDefaultSettings().customDays,
   };
+};
 
-  saveSettings(settings);
-  updateView(settings, completions);
+const updateFormVisibility = (settings) => {
+  renderForm(settings);
+};
+
+let habits = loadHabits();
+let draftSettings = getDefaultSettings();
+
+renderForm(draftSettings);
+renderHabits(habits);
+
+habitGoalSelect.addEventListener("change", (event) => {
+  draftSettings = { ...draftSettings, goal: event.target.value };
+  updateFormVisibility(draftSettings);
+});
+
+habitForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const settings = getFormSettings();
+  const newHabit = createHabit(settings);
+  habits = [...habits, newHabit];
+  saveHabits(habits);
+  habitForm.reset();
+  draftSettings = getDefaultSettings();
+  renderForm(draftSettings);
+  renderHabits(habits);
 });

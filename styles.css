@@ -179,7 +179,6 @@ h1 {
 }
 
 .summary {
-  margin-top: 24px;
   background: var(--bg);
   border-radius: 20px;
   padding: 18px 20px;
@@ -224,6 +223,36 @@ h1 {
 
 .grid__header p {
   color: var(--muted);
+}
+
+.habits {
+  display: grid;
+  gap: 20px;
+}
+
+.habit-card {
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  padding: 20px;
+  display: grid;
+  gap: 16px;
+}
+
+.habit-card__header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.habit-card__title {
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.habit-card__goal {
+  color: var(--muted);
+  font-size: 0.95rem;
 }
 
 .grid {
