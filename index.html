@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Habit Tracker</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <header class="app__header">
+        <div>
+          <p class="app__eyebrow">Meu Habit Tracker</p>
+          <h1>Construa consistência como no GitHub</h1>
+          <p class="app__subtitle">
+            Marque seus hábitos e acompanhe sua constância com um grid diário.
+          </p>
+        </div>
+        <div class="app__legend">
+          <span class="legend__label">Legenda</span>
+          <div class="legend__swatches">
+            <span class="swatch swatch--empty"></span>
+            <span class="swatch swatch--done"></span>
+          </div>
+          <span class="legend__caption">menos &rarr; mais</span>
+        </div>
+      </header>
+
+      <section class="panel">
+        <form class="habit-form" id="habit-form">
+          <label class="field">
+            <span>Nome do hábito</span>
+            <input id="habit-name" name="habit-name" type="text" placeholder="Ex: Meditar" />
+          </label>
+
+          <label class="field">
+            <span>Objetivo</span>
+            <select id="habit-goal" name="habit-goal">
+              <option value="daily">Diário</option>
+              <option value="weekly">Semanal</option>
+              <option value="monthly">Mensal</option>
+              <option value="custom">Dias específicos</option>
+            </select>
+          </label>
+
+          <label class="field field--inline" id="weekly-goal-field">
+            <span>Meta por semana</span>
+            <input id="weekly-goal" type="number" min="1" max="7" value="3" />
+          </label>
+
+          <label class="field field--inline" id="monthly-goal-field">
+            <span>Meta por mês</span>
+            <input id="monthly-goal" type="number" min="1" max="31" value="12" />
+          </label>
+
+          <fieldset class="field field--days" id="custom-days-field">
+            <legend>Dias desejados</legend>
+            <label><input type="checkbox" value="1" checked />Seg</label>
+            <label><input type="checkbox" value="2" checked />Ter</label>
+            <label><input type="checkbox" value="3" checked />Qua</label>
+            <label><input type="checkbox" value="4" />Qui</label>
+            <label><input type="checkbox" value="5" />Sex</label>
+            <label><input type="checkbox" value="6" />Sáb</label>
+            <label><input type="checkbox" value="0" />Dom</label>
+          </fieldset>
+
+          <button class="primary" type="submit">Adicionar hábito</button>
+        </form>
+      </section>
+
+      <section class="panel panel--grid">
+        <div class="grid__header">
+          <h2>Meus hábitos</h2>
+          <p>Toque nos quadrados para marcar cada hábito.</p>
+        </div>
+        <div class="habits" id="habits-list" aria-label="Lista de hábitos"></div>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>

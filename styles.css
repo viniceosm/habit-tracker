@@ -1,0 +1,310 @@
+:root {
+  color-scheme: light;
+  --bg: #f6f8fb;
+  --card: #ffffff;
+  --text: #162032;
+  --muted: #51607a;
+  --border: #e3e7ef;
+  --accent: #2da44e;
+  --accent-light: #d9fbe4;
+  --inactive: #f0f2f6;
+  --shadow: 0 18px 50px rgba(13, 30, 67, 0.08);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  padding: 40px 24px 64px;
+}
+
+.app {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.app__header {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.app__eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 0.72rem;
+}
+
+h1 {
+  font-size: clamp(1.8rem, 2.6vw, 2.6rem);
+  margin: 8px 0 10px;
+}
+
+.app__subtitle {
+  color: var(--muted);
+  max-width: 520px;
+}
+
+.app__legend {
+  background: var(--card);
+  padding: 14px 18px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  display: grid;
+  gap: 6px;
+  min-width: 170px;
+  box-shadow: var(--shadow);
+}
+
+.legend__label {
+  font-size: 0.85rem;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.legend__swatches {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.swatch {
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+}
+
+.swatch--empty {
+  background: var(--inactive);
+}
+
+.swatch--done {
+  background: var(--accent);
+}
+
+.legend__caption {
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.panel {
+  background: var(--card);
+  border-radius: 24px;
+  padding: 24px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+
+.panel--grid {
+  padding: 20px 24px 30px;
+}
+
+.habit-form {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  align-items: end;
+}
+
+.field {
+  display: grid;
+  gap: 8px;
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+
+.field input,
+.field select {
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  font-size: 0.95rem;
+}
+
+.field--inline {
+  max-width: 220px;
+}
+
+.field--days {
+  grid-column: span 2;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  color: var(--muted);
+}
+
+.field--days legend {
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 8px;
+  width: 100%;
+}
+
+.field--days label {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  font-size: 0.85rem;
+}
+
+.primary {
+  background: var(--text);
+  color: #fff;
+  padding: 12px 18px;
+  border-radius: 12px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.primary:hover {
+  opacity: 0.9;
+}
+
+.summary {
+  background: var(--bg);
+  border-radius: 20px;
+  padding: 18px 20px;
+  border: 1px solid var(--border);
+  display: grid;
+  gap: 10px;
+}
+
+.summary__title {
+  font-weight: 700;
+}
+
+.summary__goal {
+  color: var(--muted);
+}
+
+.summary__stats {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.summary__label {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.summary__value {
+  font-weight: 700;
+  font-size: 1.1rem;
+  display: block;
+}
+
+.grid__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.grid__header p {
+  color: var(--muted);
+}
+
+.habits {
+  display: grid;
+  gap: 20px;
+}
+
+.habit-card {
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  padding: 20px;
+  display: grid;
+  gap: 16px;
+}
+
+.habit-card__header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.habit-card__title {
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.habit-card__goal {
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.grid {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(14px, 1fr);
+  gap: 6px;
+}
+
+.day-column {
+  display: grid;
+  gap: 6px;
+}
+
+.day {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  background: var(--inactive);
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+
+.day--done {
+  background: var(--accent);
+}
+
+.day--inactive {
+  background: #ffffff;
+  border: 1px dashed var(--border);
+  cursor: not-allowed;
+}
+
+.day--today {
+  border: 1px solid var(--text);
+}
+
+@media (max-width: 720px) {
+  body {
+    padding: 28px 16px 48px;
+  }
+
+  .habit-form {
+    grid-template-columns: 1fr;
+  }
+
+  .field--days {
+    grid-column: span 1;
+  }
+
+  .grid {
+    overflow-x: auto;
+    padding-bottom: 12px;
+  }
+}
